@@ -1,0 +1,6 @@
+**.RData
+**.pdf
+**.Rhistory
+**.swp
+output/*
+.DS_Store
