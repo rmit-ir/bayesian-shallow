@@ -25,19 +25,6 @@ compute_bayesian_model <- function(file_path, pooled_path, strict, simtype, base
     return(model)
 }
 
-compute_piecewise_risk <- function(file_path, pooled_path, baseline, alpha) {
-    chains <- 2
-    cores <- 2 
-    iter <- 2000
-    adapt_delta <- 0.95 #0.9999
-    model <- NULL
-
-    model <- .run_mcmc_risk(file_path, pooled_path, chains, cores, iter, adapt_delta, score ~ rank + (1 | topic) + (1 | system), zero_inflated_beta, baseline, alpha)
-
-    return(model)
-}
-
-
 compute_all_system_cis <- function(modelfit) {
     # compute 95% intervals
     table <- as.data.frame(posterior_summary(modelfit, probs=c(.025, .5, .975)))
