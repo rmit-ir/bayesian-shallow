@@ -18,9 +18,6 @@ compute_bayesian_model <- function(file_path, pooled_path, strict, simtype, base
     } else if (simtype == 3) {
 	    model <- .run_mcmc(file_path, pooled_path, chains, cores, iter, adapt_delta, score ~ rank + (1 | topic) + (1 | system), zero_inflated_beta)
     }
-    else {
-	    model <- .run_mcmc_risk(file_path, pooled_path, chains, cores, iter, adapt_delta, score ~ rank + (1 | topic) + (1 | system), zero_inflated_beta, baseline, alpha)
-    }
 
     return(model)
 }
@@ -39,59 +36,6 @@ compute_all_system_cis <- function(modelfit) {
         select("names", "Q2.5", "Q50", "Q97.5")
 
     return(subsetsystems)
-}
-
-compute_all_system_cis_50 <- function(modelfit) {
-    # compute 95% intervals
-    table <- as.data.frame(posterior_summary(modelfit, probs=c(.25, .5, .75)))
-    table$names <- rownames(table)
-
-    # remove metadata around system values
-    allsystems <- .remove_param_metadata(table, "system")
-
-    # subset only the systems we care about
-    subsetsystems <- 
-        allsystems %>% 
-        select("names", "Q25", "Q50", "Q75")
-
-    return(subsetsystems)
-}
-
-
-compute_system_cis <- function(modelfit, system_subset) {
-    # compute 95% intervals
-    table <- round(as.data.frame(posterior_summary(modelfit, probs=c(.025, .5, .975))), 3)
-
-    table$names <- rownames(table)
-
-    # remove metadata around system values
-    allsystems <- .remove_param_metadata(table, "system")
-
-    # subset only the systems we care about
-    subsetsystems <- 
-        allsystems[allsystems$names %in% system_subset,] %>% 
-        select("names", "2.5%", "mean", "97.5%")
-    return(subsetsystems)
-}
-
-compute_topic_cis <- function(modelfit) {
-    # compute 95% intervals
-    table <- round(as.data.frame(posterior_summary(modelfit, probs=c(.025, .5, .975))), 3)
-    table$names <- rownames(table)
-
-    # remove metadata around system values
-    alltopics <- .remove_param_metadata(table, "topic")
-
-    # subset only the systems we care about
-    subsettopics <- 
-        alltopics %>% 
-        select("names", "Q2.5", "Q50", "Q97.5")
-    return(subsettopics)
-}
-
-compute_predictive_intervals <- function(modelfit, probval) {
-    intervals <- predictive_interval(modelfit, prob=probval)
-    return(intervals)
 }
 
 .remove_param_metadata <- function(table, effect) {
