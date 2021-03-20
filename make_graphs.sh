@@ -4,8 +4,8 @@ set -e
 cd R
 
 # compute bayesian models
-#echo "Making models"
-#Rscript --no-save make_models.R 
+echo "Making models"
+Rscript --no-save make_models.R 
 
 echo "Doing risk comps"
 cd risk_comps
